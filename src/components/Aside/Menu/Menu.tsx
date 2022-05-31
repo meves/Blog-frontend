@@ -5,6 +5,8 @@ import InfoIcon from '@mui/icons-material/Info';
 import ArticleIcon from '@mui/icons-material/Article';
 import ContactsIcon from '@mui/icons-material/Contacts';
 import NotesIcon from '@mui/icons-material/Notes';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import GroupIcon from '@mui/icons-material/Group';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -18,7 +20,7 @@ const LinkNav = styled(Link)`
 export const Menu: FC =(props) => {
     return (
         <div>
-            <Paper sx={{ width: 320, maxWidth: '100%'}}>
+            <Paper sx={{ maxWidth: '100%'}}>
                 <MenuList>
                     <MenuItem>
                         <ListItemIcon><HomeIcon fontSize="small" color='primary'/></ListItemIcon>
@@ -28,11 +30,24 @@ export const Menu: FC =(props) => {
                     </MenuItem>
                     <Divider/>
                     <MenuItem>
+                        <ListItemIcon><AccountCircleIcon fontSize="small" color="info"/></ListItemIcon>
+                        <ListItemText>
+                            <LinkNav to="/profile">Profile</LinkNav>
+                        </ListItemText>
+                    </MenuItem>
+                    <MenuItem>
+                        <ListItemIcon><GroupIcon fontSize="small" color="info"/></ListItemIcon>
+                        <ListItemText>
+                            <LinkNav to="/users">Users</LinkNav>
+                        </ListItemText>
+                    </MenuItem>
+                    <MenuItem>
                         <ListItemIcon><NotesIcon fontSize="small" color="info"/></ListItemIcon>
                         <ListItemText>
                             <LinkNav to="/posts">Posts</LinkNav>
                         </ListItemText>
                     </MenuItem>
+                    <Divider/>
                     <MenuItem>
                         <ListItemIcon><ArticleIcon fontSize="small" color="info"/></ListItemIcon>                        
                         <ListItemText>

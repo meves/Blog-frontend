@@ -1,7 +1,8 @@
 import { Avatar, Grid, Paper, Stack } from '@mui/material';
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Sergey from '../../assets/Sergey.jpg';
+import AvatarPhoto from '../../assets/avatar.jpg';
+import { IUserType } from '../types/types';
 
 const Author = styled.div`
     font-size: 1rem;
@@ -16,22 +17,27 @@ const Post = styled.div`
 `;
 
 const Posts: FC = (props) => {
+    const initUsers: Array<IUserType> = [];
+    const [users, setUsers] = useState<Array<IUserType>>(initUsers);
+    useEffect(() => {
+        fetch('http://localhost:3000/users', {method: "GET"})
+        .then(response => response.json())
+        .then((users) => { setUsers(users) } )
+        .catch(err => console.warn(err));
+    }, [users]);
+    const usersItems = users.map(users => (
+            <Author key={users.id}>
+                <Avatar alt={users.name} src={AvatarPhoto}/>
+                <p>{users.name}</p>
+                <p>{users.country}</p>
+                <p>{users.city}</p>
+            </Author>
+    ))
     return (
         <Grid container spacing={2}>
             <Grid item xs={4}>
                 <Stack spacing={2} direction="column">
-                    <Author>
-                        <Avatar alt="Sergey" src={Sergey}></Avatar>Sergey
-                    </Author>
-                    <Author>
-                        <Avatar alt="Sergey" src={Sergey}></Avatar>Sergey
-                    </Author>
-                    <Author>
-                        <Avatar alt="Sergey" src={Sergey}></Avatar>Sergey
-                    </Author>
-                    <Author>
-                        <Avatar alt="Sergey" src={Sergey}></Avatar>Sergey
-                    </Author>
+                    { usersItems }
                 </Stack>
             </Grid>
             <Grid item xs={8}>
