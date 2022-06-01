@@ -1,12 +1,8 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import { Carousel } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export const Home: FC = (props) => {
-  const [text, setText] = useState('');
-  useEffect(() => {
-    fetch('http://localhost:3000/users').then(response => response.text()).then(data => setText(data));
-  });
     return (
       <Carousel fade>
 

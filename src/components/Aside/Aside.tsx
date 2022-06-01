@@ -1,4 +1,3 @@
-import { Paper } from '@mui/material';
 import React, { FC } from 'react';
 import { Friends } from './Friends/Friends';
 import { Menu } from './Menu/Menu';
