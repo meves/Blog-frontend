@@ -1,11 +1,10 @@
 import { Avatar, Grid, Stack } from '@mui/material';
 import React, { FC, useEffect } from 'react';
 import styled from 'styled-components';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import AvatarPhoto from '../../assets/avatar.jpg';
-import { getUsersSelector } from '../../redux/selectors/usersSelectors';
-import { getPost, getPosts } from '../../redux/slices/postsSlice';
-import { getUser, getUsers } from '../../redux/slices/usersSlice';
-import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { getUsersErrorSelector, getUsersIsFetchingSelector, getUsersSelector } from '../../redux/selectors/users-selector';
+import { getUsers } from '../../redux/slices/usersSlice';
 
 const Author = styled.div`
     font-size: 1rem;
@@ -20,11 +19,15 @@ const Post = styled.div`
 `;
 
 const Posts: FC = (props) => {    
+    // get data from state
+    const isFetching = useAppSelector(getUsersIsFetchingSelector);
+    const error = useAppSelector(getUsersErrorSelector);
     const users = useAppSelector(getUsersSelector);
+
     const dispatch = useAppDispatch();
     useEffect(() => {
         dispatch(getUsers());
-    }, [dispatch]); 
+    }, [dispatch]);
     const usersItems = users.map(users => (
             <Author key={users.id}>
                 <Avatar alt={users.name} src={AvatarPhoto}/>
@@ -35,10 +38,9 @@ const Posts: FC = (props) => {
     ))
     return (
         <Grid container spacing={2}>
-            <button onClick={() => { dispatch(getPosts()); dispatch(getPost(2)); dispatch(getUser(2)); }}>Click</button>
             <Grid item xs={4}>
                 <Stack spacing={2} direction="column">
-                    { usersItems }
+                    { isFetching ? 'Loading...' : !error ? usersItems : 'Something went wrong' }
                 </Stack>
             </Grid>
             <Grid item xs={8}>

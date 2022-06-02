@@ -10,9 +10,3 @@ export const store = configureStore({
 });
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-/**
- * createAsyncThunk: abstracts the standard "dispatch actions before/after an async request" pattern
- * createEntityAdapter: prebuilt reducers and selectors for CRUD operations on normalized state
- * createSelector: a re-export of the standard Reselect API for memoized selectors
- * createListenerMiddleware: a side effects middleware for running logic in response to dispatched actions
- */
