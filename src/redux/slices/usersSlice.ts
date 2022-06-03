@@ -9,13 +9,17 @@ interface IUsersState {
     user: IUserType
     isFetching: boolean
     error: string
+    page: number
+    count: number
 }
 
 const initialState: IUsersState = {
-    users: [] as Array<IUserType>,
+    users: [],
     user: {} as IUserType,
     isFetching: false,
-    error: ''
+    error: '',
+    page: 1,
+    count: 5
 }
 
 const usersSlice = createSlice({
@@ -24,6 +28,12 @@ const usersSlice = createSlice({
     reducers: {
         setIsFetching: (state) => {
             state.isFetching = true;
+        },
+        setCurrentPage: (state, action) => {
+            state.page = action.payload;
+        },
+        setCurrenCount: (state, action) => {
+            state.count = action.payload;
         },
         usersAddedSuccess: (state, action: PayloadAction<Array<IUserType>>) => {
             state.isFetching = false;
@@ -46,17 +56,20 @@ const usersSlice = createSlice({
     }
 });
 
-export const { setIsFetching, userAddedError, userAddedSuccess, usersAddedError, usersAddedSuccess } = usersSlice.actions;
+export const { setIsFetching, userAddedError, userAddedSuccess, usersAddedError, usersAddedSuccess,
+               setCurrentPage, setCurrenCount } = usersSlice.actions;
 
 export default usersSlice.reducer;
 
 type ThunkType = ThunkAction<Promise<void>, RootState, undefined, Action<typeof usersSlice.actions>>;
 
-export const getUsers = (): ThunkType => 
+export const getUsers = (currentPage: number, currentCount: number): ThunkType => 
     async (dispatch: AppDispatch) => {
         try {
             dispatch(setIsFetching());
-            const response = await usersApi.getUsers();
+            dispatch(setCurrentPage(currentPage));
+            dispatch(setCurrenCount(currentCount));
+            const response = await usersApi.getUsers(currentPage, currentCount);
             if (response.status === 200) {
                 const users = await response.json();
                 dispatch(usersAddedSuccess(users));

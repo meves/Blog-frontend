@@ -1,9 +1,12 @@
-import { Avatar, Grid, Stack } from '@mui/material';
+import { Avatar, Grid, Stack, Button } from '@mui/material';
 import React, { FC, useEffect } from 'react';
 import styled from 'styled-components';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import AvatarPhoto from '../../assets/avatar.jpg';
-import { getUsersErrorSelector, getUsersIsFetchingSelector, getUsersSelector } from '../../redux/selectors/users-selector';
+import { getCountUsersSelector, getPageUsersSelector, getUsersErrorSelector, 
+         getUsersIsFetchingSelector, getUsersSelector } from '../../redux/selectors/users-selector';
+import { getPostsSelector, getPostsIsFetchingSelector, getPostsErrorSelector } from '../../redux/selectors/posts-selectors';
+import { getPosts } from '../../redux/slices/postsSlice';
 import { getUsers } from '../../redux/slices/usersSlice';
 
 const Author = styled.div`
@@ -19,41 +22,59 @@ const Post = styled.div`
 `;
 
 const Posts: FC = (props) => {    
-    // get data from state
-    const isFetching = useAppSelector(getUsersIsFetchingSelector);
-    const error = useAppSelector(getUsersErrorSelector);
+    // get users from state
+    const usersIsFetching = useAppSelector(getUsersIsFetchingSelector);
+    const usersError = useAppSelector(getUsersErrorSelector);
     const users = useAppSelector(getUsersSelector);
-
+    // get posts from state
+    const posts = useAppSelector(getPostsSelector);
+    const postsIsFetching = useAppSelector(getPostsIsFetchingSelector);
+    const postsError = useAppSelector(getPostsErrorSelector);
+    // get page and count from state
+    const currentPage = useAppSelector(getPageUsersSelector);
+    const currentCount = useAppSelector(getCountUsersSelector);
+    // get the same users as on posts page to display 
     const dispatch = useAppDispatch();
     useEffect(() => {
-        dispatch(getUsers());
+        dispatch(getUsers(currentPage, currentCount));
     }, [dispatch]);
-    const usersItems = users.map(users => (
-            <Author key={users.id}>
-                <Avatar alt={users.name} src={AvatarPhoto}/>
-                <p>{users.name}</p>
-                <p>{users.country}</p>
-                <p>{users.city}</p>
+    // get posts for user
+    useEffect(() => {
+        if (users.length !== 0) {
+            dispatch(getPosts(users[0].id));        
+        }
+    }, [users, dispatch]);
+    const handleClick = (event: React.SyntheticEvent) => {
+        dispatch(getPosts(Number(event.currentTarget.id)));
+    }
+    // users to be displayed
+    const usersItems = users?.map(user => (
+            <Author key={user.id} id={`${user.id}`} onClick={handleClick}>
+                <Avatar alt={user.name} src={AvatarPhoto}/>
+                <p>{user.name}</p>
+                <p>{user.country}</p>
+                <p>{user.city}</p>
+                <div><Button color="secondary">Show posts</Button></div>
             </Author>
+    ))
+    // posts to be displayed
+    const postsItems = posts.map(post => (
+        <Post key={post.id}>
+            <h2>{post.header}</h2>
+            <p>{post.txt}</p>
+            <p><time dateTime={post.dt}>{post.dt}</time></p>
+        </Post>
     ))
     return (
         <Grid container spacing={2}>
             <Grid item xs={4}>
                 <Stack spacing={2} direction="column">
-                    { isFetching ? 'Loading...' : !error ? usersItems : 'Something went wrong' }
+                    { usersIsFetching ? 'Loading...' : !usersError ? usersItems : 'Something went wrong' }
                 </Stack>
             </Grid>
             <Grid item xs={8}>
                 <Stack spacing={2} direction="column">
-                    <Post>
-                        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quibusdam repudiandae aspernatur obcaecati modi praesentium ducimus omnis veniam quaerat nobis deserunt neque hic rem itaque, voluptate, necessitatibus totam fuga commodi facilis.
-                    </Post>
-                    <Post>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus minima quod magni eius quidem neque! Reiciendis inventore cupiditate autem dignissimos amet facilis modi alias, fuga similique vero voluptas rem quae!
-                    </Post>
-                    <Post>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Non recusandae, natus eos asperiores quidem distinctio animi. Qui quod sequi deleniti blanditiis numquam, cumque atque obcaecati maiores? Cum sed error odio!
-                    </Post>
+                    { postsIsFetching ? 'Loading...' : !postsError ? postsItems : 'Something went wrong' } 
                 </Stack>
             </Grid>
         </Grid>

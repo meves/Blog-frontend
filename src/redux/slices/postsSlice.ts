@@ -52,13 +52,13 @@ export default postsSlice.reducer;
 
 type ThunkType = ThunkAction<Promise<void>, RootState, undefined, Action<typeof postsSlice.actions>>;
 
-export const getPosts = (): ThunkType => 
+export const getPosts = (userId: number): ThunkType => 
     async (dispatch: AppDispatch) => {
         try {
             dispatch(setIsFetching());
-            const response = await postsApi.getPosts();
+            const response = await postsApi.getPosts(userId);
             if (response.status === 200) {
-                const posts = await response.json();
+                const posts: Array<IPostType> = await response.json();
                 dispatch(postsAddedSuccess(posts));
             }
         } catch (error) {
@@ -72,7 +72,7 @@ export const getPost = (postId: number): ThunkType =>
             dispatch(setIsFetching());
             const response = await postsApi.getPost(postId);
             if (response.status === 200) {
-                const post = await response.json();
+                const post: IPostType = await response.json();
                 dispatch(postAddedSuccess(post));
             }
         } catch (error) {
